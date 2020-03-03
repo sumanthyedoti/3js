@@ -51,7 +51,9 @@ class World {
     this.container.append(this.renderer.domElement);
   }
 
-  start() {}
+  start() {
+    this.renderer.render(this.scene, this.camera);
+  }
 }
 
 export { World };
