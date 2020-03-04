@@ -2,7 +2,8 @@ import {
   BoxBufferGeometry,
   Color,
   Mesh,
-  MeshBasicMaterial,
+  MeshStandardMaterial,
+  DirectionalLight,
   PerspectiveCamera,
   Scene,
   WebGLRenderer,
@@ -14,6 +15,7 @@ class World {
     /* call functionality */
     this.createScene();
     this.createCamera();
+    this.createLights();
     this.createMeshes();
     this.createRenderer();
   }
@@ -33,18 +35,30 @@ class World {
     this.camera.position.set(0, 0, 10);
   }
 
+  createLights() {
+    const light = new DirectionalLight('white', 15); /* color, and intensity */
+    light.position.set(0, 20, 20); /* position */
+    this.scene.add(light);
+  }
+
   createMeshes() {
+    const spec = {
+      color: 'purple',
+    };
     /* geometry */
     const geometry = new BoxBufferGeometry(2, 2, 2);
     /* material */
-    const material = new MeshBasicMaterial();
+    const material = new MeshStandardMaterial(spec);
     /* mesh */
     const mesh = new Mesh(geometry, material);
+    /* rotation */
+    mesh.rotation.set(0.5, -0.5, 0.5);
     this.scene.add(mesh);
   }
 
   createRenderer() {
     this.renderer = new WebGLRenderer();
+    this.renderer.physicallyCorrectLights = true; /* PBG */
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
     // add the automatically created <canvas> element to the page
