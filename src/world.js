@@ -18,6 +18,7 @@ class World {
     this.createLights();
     this.createMeshes();
     this.createRenderer();
+    this.handleResize();
   }
 
   createScene() {
@@ -57,12 +58,36 @@ class World {
   }
 
   createRenderer() {
-    this.renderer = new WebGLRenderer();
+    this.renderer = new WebGLRenderer({ antialias: true });
     this.renderer.physicallyCorrectLights = true; /* PBG */
-    this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
-    this.renderer.setPixelRatio(window.devicePixelRatio);
+    // this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+    // this.renderer.setPixelRatio(window.devicePixelRatio);
     // add the automatically created <canvas> element to the page
     this.container.append(this.renderer.domElement);
+  }
+
+  handleResize() {
+    const onResize = () => {
+      // set the aspect ratio to match the new browser window aspect ratio
+      this.camera.aspect =
+        this.container.clientWidth / this.container.clientHeight;
+
+      // update the camera's frustum
+      this.camera.updateProjectionMatrix();
+
+      // update the size of the renderer AND the canvas
+      this.renderer.setSize(
+        this.container.clientWidth,
+        this.container.clientHeight,
+      );
+
+      this.renderer.setPixelRatio(window.devicePixelRatio);
+
+      this.renderer.render(this.scene, this.camera);
+    };
+
+    onResize();
+    window.addEventListener('resize', onResize);
   }
 
   start() {
