@@ -2,6 +2,7 @@ import {
   BoxBufferGeometry,
   Color,
   Mesh,
+  Clock,
   MeshStandardMaterial,
   DirectionalLight,
   PerspectiveCamera,
@@ -12,6 +13,8 @@ import {
 class World {
   constructor(container) {
     this.container = container;
+
+    this.clock = new Clock();
     /* call functionality */
     this.createScene();
     this.createCamera();
@@ -51,10 +54,8 @@ class World {
     /* material */
     const material = new MeshStandardMaterial(spec);
     /* mesh */
-    const mesh = new Mesh(geometry, material);
-    /* rotation */
-    mesh.rotation.set(0.5, -0.5, 0.5);
-    this.scene.add(mesh);
+    this.mesh = new Mesh(geometry, material);
+    this.scene.add(this.mesh);
   }
 
   createRenderer() {
@@ -69,8 +70,7 @@ class World {
   handleResize() {
     const onResize = () => {
       // set the aspect ratio to match the new browser window aspect ratio
-      this.camera.aspect =
-        this.container.clientWidth / this.container.clientHeight;
+      this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
 
       // update the camera's frustum
       this.camera.updateProjectionMatrix();
@@ -83,14 +83,34 @@ class World {
 
       this.renderer.setPixelRatio(window.devicePixelRatio);
 
-      this.renderer.render(this.scene, this.camera);
+      // this.renderer.render(this.scene, this.camera); /* not needed with animation loop */
     };
 
     onResize();
     window.addEventListener('resize', onResize);
   }
 
+
   start() {
+    this.renderer.setAnimationLoop(() => {
+      // Everything inside here will run once per frame
+      // update any animations
+      this.update();
+      // render a new frame
+      this.render();
+    });
+  }
+
+  update() {
+    const delta = this.clock.getDelta();
+
+    this.mesh.rotation.z += delta / 2;
+    this.mesh.rotation.x += delta / 2;
+    this.mesh.rotation.y += delta / 2;
+  }
+
+  render() {
+    // render, or 'create a still image', of the scene
     this.renderer.render(this.scene, this.camera);
   }
 }
