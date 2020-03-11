@@ -4,11 +4,14 @@ import {
   Mesh,
   Clock,
   MeshStandardMaterial,
+  TextureLoader,
   DirectionalLight,
   PerspectiveCamera,
   Scene,
   WebGLRenderer,
 } from 'three';
+
+const textureImage = require('../assets/textures/uv-test-bw.png');
 
 class World {
   constructor(container) {
@@ -46,13 +49,14 @@ class World {
   }
 
   createMeshes() {
-    const spec = {
-      color: 'purple',
-    };
     /* geometry */
     const geometry = new BoxBufferGeometry(2, 2, 2);
+    /* texture loader */
+    const texture = new TextureLoader().load(textureImage);
     /* material */
-    const material = new MeshStandardMaterial(spec);
+    const material = new MeshStandardMaterial({
+      map: texture,
+    });
     /* mesh */
     this.mesh = new Mesh(geometry, material);
     this.scene.add(this.mesh);
