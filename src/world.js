@@ -7,6 +7,7 @@ import {
   TextureLoader,
   DirectionalLight,
   AmbientLight,
+  HemisphereLight,
   PerspectiveCamera,
   Scene,
   WebGLRenderer,
@@ -59,8 +60,13 @@ class World {
 
   createLights() {
     const light = new DirectionalLight('white', 4); /* color, and intensity */
-    light.position.set(0, 100, 100); /* position */
-    const ambientLight = new AmbientLight('white', 1.2);
+    light.position.set(100, 100, 100); /* position */
+    // const ambientLight = new AmbientLight('white', 1.2);
+    const ambientLight = new HemisphereLight(
+      'white', // bright sky color
+      '#444', // dim ground color
+      3, // intensity
+    );
     this.scene.add(light);
     this.scene.add(ambientLight);
   }
