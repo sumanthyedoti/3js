@@ -6,10 +6,12 @@ import {
   MeshStandardMaterial,
   TextureLoader,
   DirectionalLight,
+  AmbientLight,
   PerspectiveCamera,
   Scene,
   WebGLRenderer,
 } from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 const textureImage = require('../assets/textures/uv-test-bw.png');
 
@@ -21,6 +23,7 @@ class World {
     /* call functionality */
     this.createScene();
     this.createCamera();
+    this.createCameraControls();
     this.createLights();
     this.createMeshes();
     this.createRenderer();
@@ -39,13 +42,27 @@ class World {
     const far = 100;
     this.camera = new PerspectiveCamera(fov, aspect, near, far);
     /* camera obj position */
-    this.camera.position.set(0, 0, 10);
+    this.camera.position.set(0, 0, 10); 
+  }
+  
+  createCameraControls() {
+    this.controls = new OrbitControls(this.camera, this.container);
+    this.controls.enablePan = false;
+    this.controls.enableZoom = false;
+    // this.controls.autoRotate = true;
+    this.controls.enableDamping = true;
+    setInterval(() => {
+      this.controls.saveState();
+      this.controls.reset();
+    }, 4000);
   }
 
   createLights() {
-    const light = new DirectionalLight('white', 15); /* color, and intensity */
-    light.position.set(0, 20, 20); /* position */
+    const light = new DirectionalLight('white', 4); /* color, and intensity */
+    light.position.set(0, 100, 100); /* position */
+    const ambientLight = new AmbientLight('white', 1.2);
     this.scene.add(light);
+    this.scene.add(ambientLight);
   }
 
   createMeshes() {
@@ -107,7 +124,7 @@ class World {
 
   update() {
     const delta = this.clock.getDelta();
-
+    this.controls.update();
     this.mesh.rotation.z += delta / 2;
     this.mesh.rotation.x += delta / 2;
     this.mesh.rotation.y += delta / 2;
