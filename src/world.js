@@ -8,12 +8,13 @@ import {
   DirectionalLight,
   AmbientLight,
   HemisphereLight,
+  PointLight,
   PerspectiveCamera,
   Scene,
   WebGLRenderer,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-
+import {ToyTrain} from './ToyTrain';
 const textureImage = require('../assets/textures/uv-test-bw.png');
 
 class World {
@@ -43,13 +44,13 @@ class World {
     const far = 100;
     this.camera = new PerspectiveCamera(fov, aspect, near, far);
     /* camera obj position */
-    this.camera.position.set(0, 0, 10); 
+    this.camera.position.set(-2, 4, 8);
   }
-  
+
   createCameraControls() {
     this.controls = new OrbitControls(this.camera, this.container);
     this.controls.enablePan = false;
-    this.controls.enableZoom = false;
+    this.controls.enableZoom = true;
     // this.controls.autoRotate = true;
     this.controls.enableDamping = true;
     setInterval(() => {
@@ -59,29 +60,28 @@ class World {
   }
 
   createLights() {
-    const light = new DirectionalLight('white', 4); /* color, and intensity */
-    light.position.set(100, 100, 100); /* position */
-    // const ambientLight = new AmbientLight('white', 1.2);
     const ambientLight = new HemisphereLight(
       'white', // bright sky color
       '#444', // dim ground color
-      3, // intensity
+      4, // intensity
     );
-    this.scene.add(light);
-    this.scene.add(ambientLight);
+    const mainLight = new PointLight('white', 15);
+    mainLight.position.set(10, 10, 10);
+
+    this.scene.add(ambientLight, mainLight);
   }
 
   createMeshes() {
     /* geometry */
-    const geometry = new BoxBufferGeometry(2, 2, 2);
+    this.mesh = new ToyTrain();
     /* texture loader */
-    const texture = new TextureLoader().load(textureImage);
-    /* material */
-    const material = new MeshStandardMaterial({
-      map: texture,
-    });
-    /* mesh */
-    this.mesh = new Mesh(geometry, material);
+    // const texture = new TextureLoader().load(textureImage);
+    // /* material */
+    // const material = new MeshStandardMaterial({
+    //   map: texture,
+    // });
+    // /* mesh */
+    // this.mesh = new Mesh(geometry, material);
     this.scene.add(this.mesh);
   }
 
@@ -130,10 +130,10 @@ class World {
 
   update() {
     const delta = this.clock.getDelta();
+    // this.mesh.rotation.x -= delta / 4;
+    this.mesh.rotation.y += delta / 20;
+    // this.mesh.rotation.z += delta / 4;
     this.controls.update();
-    this.mesh.rotation.z += delta / 2;
-    this.mesh.rotation.x += delta / 2;
-    this.mesh.rotation.y += delta / 2;
   }
 
   render() {
