@@ -3,19 +3,19 @@ import {
   Color,
   Mesh,
   Clock,
-  MeshStandardMaterial,
-  TextureLoader,
-  DirectionalLight,
-  AmbientLight,
   HemisphereLight,
   PointLight,
   PerspectiveCamera,
   Scene,
+  Vector3,
   WebGLRenderer,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import {ToyTrain} from './ToyTrain';
+import {ModelLoader} from './ModelLoader';
 const textureImage = require('../assets/textures/uv-test-bw.png');
+const parrotModel = require('../assets/models/Parrot.glb');
+const flamingoModel = require('../assets/models/Flamingo.glb');
+const storkModel = require('../assets/models/Stork.glb');
 
 class World {
   constructor(container) {
@@ -27,7 +27,7 @@ class World {
     this.createCamera();
     this.createCameraControls();
     this.createLights();
-    this.createMeshes();
+    this.loadModels();
     this.createRenderer();
     this.handleResize();
   }
@@ -41,10 +41,10 @@ class World {
     const fov = 40;
     const aspect = this.container.clientWidth / this.container.clientHeight;
     const near = 0.1;
-    const far = 100;
+    const far = 400;
     this.camera = new PerspectiveCamera(fov, aspect, near, far);
     /* camera obj position */
-    this.camera.position.set(-2, 4, 8);
+    this.camera.position.set(0, 0, 100);
   }
 
   createCameraControls() {
@@ -52,6 +52,8 @@ class World {
     this.controls.enablePan = false;
     this.controls.enableZoom = true;
     // this.controls.autoRotate = true;
+    /* orgit around the point */
+    this.controls.target.set(1, 1, 1);
     this.controls.enableDamping = true;
     setInterval(() => {
       this.controls.saveState();
@@ -71,18 +73,14 @@ class World {
     this.scene.add(ambientLight, mainLight);
   }
 
-  createMeshes() {
-    /* geometry */
-    this.mesh = new ToyTrain();
-    /* texture loader */
-    // const texture = new TextureLoader().load(textureImage);
-    // /* material */
-    // const material = new MeshStandardMaterial({
-    //   map: texture,
-    // });
-    // /* mesh */
-    // this.mesh = new Mesh(geometry, material);
-    this.scene.add(this.mesh);
+  loadModels() {
+    const parrotPosition = new Vector3(0, 0, 0);
+    const flamingoPosition = new Vector3(40, -10, -70);
+    const storkPosition = new Vector3(-40, -25, -70);
+    const modelLoader = new ModelLoader(this.scene);
+    modelLoader.load(parrotModel, parrotPosition);
+    modelLoader.load(flamingoModel, flamingoPosition);
+    modelLoader.load(storkModel, storkPosition);
   }
 
   createRenderer() {
@@ -131,7 +129,7 @@ class World {
   update() {
     const delta = this.clock.getDelta();
     // this.mesh.rotation.x -= delta / 4;
-    this.mesh.rotation.y += delta / 20;
+    // this.mesh.rotation.y += delta / 20;
     // this.mesh.rotation.z += delta / 4;
     this.controls.update();
   }
