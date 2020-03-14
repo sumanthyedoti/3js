@@ -44,7 +44,7 @@ class World {
     const far = 400;
     this.camera = new PerspectiveCamera(fov, aspect, near, far);
     /* camera obj position */
-    this.camera.position.set(0, 0, 100);
+    this.camera.position.set(-120, 80, 100);
   }
 
   createCameraControls() {
@@ -74,9 +74,9 @@ class World {
   }
 
   loadModels() {
-    const parrotPosition = new Vector3(0, 0, 0);
-    const flamingoPosition = new Vector3(40, -10, -70);
-    const storkPosition = new Vector3(-40, -25, -70);
+    const parrotPosition = new Vector3(0, 0, 40);
+    const flamingoPosition = new Vector3(40, -10, -50);
+    const storkPosition = new Vector3(-40, -25, -50);
     const modelLoader = new ModelLoader(this.scene);
     modelLoader.load(parrotModel, parrotPosition);
     modelLoader.load(flamingoModel, flamingoPosition);
@@ -128,6 +128,9 @@ class World {
 
   update() {
     const delta = this.clock.getDelta();
+    for (const child of this.scene.children) {
+      if (child.userData.update) child.userData.update(delta);
+    }
     // this.mesh.rotation.x -= delta / 4;
     // this.mesh.rotation.y += delta / 20;
     // this.mesh.rotation.z += delta / 4;
